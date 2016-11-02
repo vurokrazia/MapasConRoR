@@ -1,0 +1,53 @@
+I")(function() {
+  var RichMarkerBuilder,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  RichMarkerBuilder = (function(superClass) {
+    extend(RichMarkerBuilder, superClass);
+
+    function RichMarkerBuilder() {
+      return RichMarkerBuilder.__super__.constructor.apply(this, arguments);
+    }
+
+    RichMarkerBuilder.prototype.create_marker = function() {
+      var options;
+      options = _.extend(this.marker_options(), this.rich_marker_options());
+      return this.serviceObject = new RichMarker(options);
+    };
+
+    RichMarkerBuilder.prototype.rich_marker_options = function() {
+      var marker;
+      marker = document.createElement("div");
+      marker.setAttribute('class', 'marker_container');
+      marker.innerHTML = this.args.title;
+      return {
+        content: marker
+      };
+    };
+
+    return RichMarkerBuilder;
+
+  })(Gmaps.Google.Builders.Marker);
+
+  this.buildMap = function(markers) {
+    var handler;
+    handler = Gmaps.build('Google', {
+      builders: {
+        Marker: RichMarkerBuilder
+      }
+    });
+    return handler.buildMap({
+      provider: {},
+      internal: {
+        id: 'map'
+      }
+    }, function() {
+      markers = handler.addMarkers(markers);
+      handler.bounds.extendWith(markers);
+      return handler.fitMapToBounds();
+    });
+  };
+
+}).call(this);
+:ET
